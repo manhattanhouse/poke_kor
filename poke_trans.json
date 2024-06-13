@@ -1,4 +1,19 @@
 {
+    "headers": {
+        "ID": "ID",
+        "Sprite": "Sprite",
+        "Name": "이름",
+        "Types": "타입",
+        "Abilities": "특성",
+        "Innates": "Innates",
+        "HP": "HP",
+        "Atk": "공격",
+        "Def": "방어",
+        "SpA": "특공",
+        "SpD": "특방",
+        "Spe": "속도",
+        "BST": "합계"
+    },
     "names": {
         "Bulbasaur": "이상해씨",
         "Ivysaur": "이상해풀",

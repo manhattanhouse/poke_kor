@@ -1,3 +1,6 @@
+[https://ydarissep.github.io/PokeRogue-Pokedex/?table=speciesTable](https://ydarissep.github.io/PokeRogue-Pokedex/?table=speciesTable)
+위 사이트를 한국어로 번역해주는 스크립트입니다.
+
 1. 확장프로그램 Tampermonkey 혹은 Violentmonkey 설치
 
     - 크롬: [Tampermonkey](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo), [Violentmonkey](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag)

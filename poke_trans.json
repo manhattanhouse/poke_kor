@@ -3721,5 +3721,11 @@
         "초상투영": "Embody Aspect",
         "테라셸": "Tera Shell",
         "제로포밍": "Teraform Zero"
+    },
+    "form": {
+        "Mega": "메가",
+        "Alolan": "알로라",
+        "Galarian": "가라르",
+        "Hisuian": "히스이"
     }
 }

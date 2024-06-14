@@ -1865,10 +1865,7 @@
         "Dragon": "드래곤",
         "Dark": "악",
         "Steel": "강철",
-        "Fairy": "페어리",
-        "Electr": "전기",
-        "Fighti": "격투",
-        "Psychi": "에스퍼"
+        "Fairy": "페어리"
     },
     "reverse": {
         "이상해씨": "Bulbasaur",
@@ -9864,5 +9861,52 @@
         "파티": "Party",
         "펀치": "punch",
         "Water리": "Physical"
-    }
+    },
+    "rarityHead": {
+        "Common": "흔함",
+        "Uncommon": "덜 흔함",
+        "Rare": "레어",
+        "Super Rare": "슈퍼 레어",
+        "Ultra Rare": "울트라 레어",
+        "Boss": "보스",
+        "Boss Rare": "레어 보스",
+        "Boss Super Rare": "슈퍼 레어 보스",
+        "Boss Ultra Rare": "울트라 레어 보스"
+    },
+    "biomes": {
+        "Abyss": "심연",
+        "Badlands": "악지",
+        "Beach": "해변",
+        "Cave": "동굴",
+        "Construction Site": "공사장",
+        "Desert": "사막",
+        "Dojo": "도장",
+        "Factory": "공장",
+        "Fairy Cave": "페어리 동굴",
+        "Forest": "숲",
+        "Grass": "풀밭",
+        "Graveyard": "묘지",
+        "Ice Cave": "얼음 동굴",
+        "Island": "섬",
+        "Jungle": "정글",
+        "Laboratory": "연구소",
+        "Lake": "호수",
+        "Meadow": "초원",
+        "Metropolis": "대도시",
+        "Mountain": "산",
+        "Plains": "평원",
+        "Power Plant": "발전소",
+        "Ruins": "고대 유적",
+        "Sea": "바다",
+        "Seabed": "해저",
+        "Slum": "슬럼",
+        "Snowy Forest": "눈 덮인 숲",
+        "Space": "우주",
+        "Swamp": "늪지",
+        "Tall Grass": "우거진 풀밭",
+        "Temple": "사원",
+        "Town": "마을",
+        "Volcano": "화산",
+        "Wasteland": "황무지"
+    }    
 }

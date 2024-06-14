@@ -9857,6 +9857,7 @@
         "근접": "Near",
         "아군": "Ally",
         "파티": "Party",
-        "펀치": "punch"
+        "펀치": "punch",
+        "Water리": "Physical"
     }
 }

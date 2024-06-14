@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      2.2
+// @version      2.3
 // @description  Translate PokeRogue Pokedex entries to Korean
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -49,7 +49,7 @@
                 if (translatedType) {
                     typeCell.textContent = translatedType;
                 } else if (typeCell.className && typeCell.className.includes('TYPE_')) {
-                    const key = lowerText(typeCell.className.slpit(' ')[0].replace('TYPE_', ''));
+                    const key = lowerText(typeCell.className.split(' ')[0].replace('TYPE_', ''));
                     typeCell.textContent = translations.types[key];
                 }
             });

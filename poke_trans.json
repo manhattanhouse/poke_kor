@@ -1455,7 +1455,7 @@
         "Galar Slowbro": "가라르 야도란",
         "Galar Farfetchd": "가라르 Farfetchd",
         "Galar Weezing": "가라르 또도가스",
-        "Galar Mr Mime": "가라르 Mr Mime",
+        "Galar Mr Mime": "가라르 마임맨",
         "Galar Articuno": "가라르 프리져",
         "Galar Zapdos": "가라르 썬더",
         "Galar Moltres": "가라르 파이어",
@@ -3720,7 +3720,9 @@
         "황금몸": "Good as Gold",
         "초상투영": "Embody Aspect",
         "테라셸": "Tera Shell",
-        "제로포밍": "Teraform Zero"
+        "제로포밍": "Teraform Zero",
+        "Cleffa삐": "Clefairy",
+        "Cleffa딱구리": "Croagunk"
     },
     "form": {
         "Mega": "메가",
@@ -9350,7 +9352,7 @@
         ],
         [
           "Freeze 10%",
-          "10% 확률로 얼림"
+          "10% 확률로 얼음"
         ],
         [
           "Paralysis 10%",
@@ -9470,7 +9472,7 @@
         ],
         [
           "20%",
-          "20% 확률로 효과 발생"
+          "20%"
         ],
         [
           "Lower Acc 1 50%",
@@ -9550,7 +9552,7 @@
         ],
         [
           "30%",
-          "30% 확률로 효과 발생"
+          "30%"
         ],
         [
           "Up Spatk 3",
@@ -9618,7 +9620,7 @@
         ],
         [
           "Freeze Flinch 10%",
-          "10% 확률로 얼림 + 풀죽음"
+          "10% 확률로 얼음 + 풀죽음"
         ],
         [
           "Burn Flinch 10%",
@@ -9746,7 +9748,7 @@
         ],
         [
           "50%",
-          "50% 확률로 효과 발생"
+          "50%"
         ],
         [
           "Lower Atk 1 30%",
@@ -9772,6 +9774,88 @@
           "Up Atk 2 Lower Def 2",
           "공격 2단계 상승 + 방어 2단계 감소"
         ]
-      ]
-      
+    ],
+    "move_filters": [
+        ["Status", "변화"],
+        ["Physical", "물리"],
+        ["Special", "특수"],
+        ["Makes Contact", "접촉"],
+        ["Punching Move", "펀치"],
+        ["Wind Move", "바람"],
+        ["Ignores Virtual", "가상 무시"],
+        ["High Crit", "급소"],
+        ["Dance Move", "춤"],
+        ["Slicing Move", "베기"],
+        ["Hides Target", "목표 숨기기"],
+        ["Priority Minus 6", "우선도 -6"],
+        ["Reckless Move", "무모함"],
+        ["Biting Move", "물기"],
+        ["Sound Based", "소리"],
+        ["Priority Minus 5", "우선도 -5"],
+        ["Triage Move", "회복"],
+        ["Powder Move", "가루"],
+        ["Priority Plus 1", "우선도 +1"],
+        ["Partial", "부분적"],
+        ["Hides User", "사용자 숨기기"],
+        ["Unimplemented", "구현되지 않음"],
+        ["Ball Bomb Move", "폭발"],
+        ["Ignores Protect", "방어 무시"],
+        ["Check All Hits", "모든 타격 확인"],
+        ["Priority Plus 4", "우선도 +4"],
+        ["Priority Minus 1", "우선도 -1"],
+        ["Priority Plus 2", "우선도 +2"],
+        ["Priority Plus 3", "우선도 +3"],
+        ["Priority Minus 3", "우선도 -3"],
+        ["Priority Plus 5", "우선도 +5"],
+        ["Priority Minus 4", "우선도 -4"],
+        ["Pulse Move", "파동"],
+        ["Priority Minus 7", "우선도 -7"],
+        ["Ignores Abilities", "특성 무시"],
+        ["All Near Enemies", "모든 근접한 적"],
+        ["Random Near Enemy", "무작위 근접한 적"],
+        ["User Side", "사용자 측"],
+        ["All Near Others", "모든 근접한 개체"],
+        ["Attacker", "공격자"],
+        ["Both Sides", "양쪽"],
+        ["User", "사용자"],
+        ["Curse", "저주"],
+        ["Enemy Side", "적 측"],
+        ["All", "전체"],
+        ["All Enemies", "모든 적"],
+        ["Party", "파티"],
+        ["Near Ally", "근접한 아군"],
+        ["User And Allies", "사용자 및 아군"],
+        ["User Or Near Ally", "사용자 또는 근접한 아군"],
+        ["Near Enemy", "근접한 적"]
+    ],
+    "move_reverse": {
+        "화상": "Burn",
+        "얼음": "Freeze",
+        "얼림": "Freeze",
+        "마비": "Paralysis",
+        "상승": "Up",
+        "감소": "Lower",
+        "공격": "Atk",
+        "풀죽음": "Flinch",
+        "명중률": "Acc",
+        "독": "Poison",
+        "잠듦": "Sleep",
+        "수면": "Sleep",
+        "혼란": "Confuse",
+        "특수방어": "SpDef",
+        "특방": "SpDef",
+        "특수공격": "SpAtk",
+        "특공": "SpAtk",
+        "속도": "Spd",
+        "스피드": "Spd",
+        "맹독": "Toxic",
+        "방어": "Def",
+        "우선도": "Priority",
+        "상태이상": "Status",
+        "상태변화": "Status",
+        "특성": "Abilities",
+        "근접": "Near",
+        "아군": "Ally",
+        "파티": "Party"
+    }
 }

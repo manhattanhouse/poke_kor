@@ -9856,6 +9856,7 @@
         "특성": "Abilities",
         "근접": "Near",
         "아군": "Ally",
-        "파티": "Party"
+        "파티": "Party",
+        "펀치": "punch"
     }
 }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      2.4
+// @version      2.5
 // @description  Translate PokeRogue Pokedex entries to Korean
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -731,6 +731,22 @@
             const observer = new MutationObserver(checkUrlChange);
             observer.observe(document, { childList: true, subtree: true });
         }
+    
+        let previousUrl = window.location.href;
+        let tableHeight = 0;
+        function checkUrlChange() {
+            const currentUrl = window.location.href;
+            const currentHeight = document.querySelector("#table").offsetHeight;
+            if (currentUrl !== previousUrl || currentHeight !== tableHeight) {
+                previousUrl = currentUrl;
+                tableHeight = currentHeight;
+                mainScript();
+            }
+        }
+    }
+
+    function lowerText(text) {
+        return text.charAt(0) + text.slice(1).toLowerCase();
     }
 
     function addButtonsEventListener() {
@@ -769,21 +785,5 @@
         const part1 = text.substring(0, splitIndex);
         const part2 = text.substring(splitIndex + 1);
         return [part1, part2];
-    }
-
-    function lowerText(text) {
-        return text.charAt(0) + text.slice(1).toLowerCase();
-    }
-
-    let previousUrl = window.location.href;
-    let tableHeight = 0;
-    function checkUrlChange() {
-        const currentUrl = window.location.href;
-        const currentHeight = document.querySelector("#table").offsetHeight;
-        if (currentUrl !== previousUrl || currentHeight !== tableHeight) {
-            previousUrl = currentUrl;
-            tableHeight = currentHeight;
-            mainScript();
-        }
     }
 })();

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      2.5
+// @version      2.6
 // @description  Translate PokeRogue Pokedex entries to Korean
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -289,7 +289,7 @@
                 observer.observe(targetNode, config);
 
                 searchInput.addEventListener('input', function() {
-                    const query = searchInput.value.trim();
+                    const query = searchInput.value;
                     if (reverseTranslations[query]) {
                         setTimeout(() => {
                             searchInput.value = reverseTranslations[query];
@@ -309,7 +309,7 @@
                             });
                         }
                     }
-                    const query = searchInput.value.trim();
+                    const query = searchInput.value;
                     if (query.length < 3) return;
                     const filterListItems = document.querySelectorAll('#speciesFilterList .tableFilter');
                     filterListItems.forEach(item => {
@@ -362,7 +362,7 @@
                 }
 
                 searchInput_move.addEventListener('input', function() {
-                    const query = searchInput_move.value.trim();
+                    const query = searchInput_move.value;
                     const reverseQuery = reverseTranslatorMove(query);
                     if (reverseQuery) {
                         setTimeout(() => {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      2.6
+// @version      2.7
 // @description  Translate PokeRogue Pokedex entries to Korean
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -314,7 +314,10 @@
                     if (query.length < 3 && !hasKorean) return;
                     const filterListItems = document.querySelectorAll('#speciesFilterList .tableFilter');
                     filterListItems.forEach(item => {
-                        const span = Array.from(item.querySelectorAll('span')).find(span => span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query));
+                        const span = Array.from(item.querySelectorAll('span')).find(span => {
+                            const originalText = span.getAttribute('data-original-text');
+                            return (originalText && originalText.includes(query)) || (span.innerText && span.innerText.includes(query));
+                        });                        
                         if (span) {
                             item.classList.remove('hide');
                         }
@@ -389,7 +392,10 @@
                     if (query.length < 3 && !hasKorean) return;
                     const filterListItems = document.querySelectorAll('#movesFilterList .tableFilter');
                     filterListItems.forEach(item => {
-                        const span = Array.from(item.querySelectorAll('span')).find(span => span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query));
+                        const span = Array.from(item.querySelectorAll('span')).find(span => {
+                            const originalText = span.getAttribute('data-original-text');
+                            return (originalText && originalText.includes(query)) || (span.innerText && span.innerText.includes(query));
+                        });   
                         if (span) {
                             item.classList.remove('hide');
                         }
@@ -520,7 +526,10 @@
                     if (query.length < 3 && !hasKorean) return;
                     const filterListItems = document.querySelectorAll('#locationsFilterList .tableFilter');
                     filterListItems.forEach(item => {
-                        const span = Array.from(item.querySelectorAll('span')).find(span => span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query));
+                        const span = Array.from(item.querySelectorAll('span')).find(span => {
+                            const originalText = span.getAttribute('data-original-text');
+                            return (originalText && originalText.includes(query)) || (span.innerText && span.innerText.includes(query));
+                        });   
                         if (span) {
                             item.classList.remove('hide');
                         }

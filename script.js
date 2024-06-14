@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      2.5
+// @version      2.6
 // @description  Translate PokeRogue Pokedex entries to Korean
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -310,7 +310,8 @@
                         }
                     }
                     const query = searchInput.value.trim();
-                    if (query.length < 3) return;
+                    const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(query);
+                    if (query.length < 3 && !hasKorean) return;
                     const filterListItems = document.querySelectorAll('#speciesFilterList .tableFilter');
                     filterListItems.forEach(item => {
                         const span = Array.from(item.querySelectorAll('span')).find(span => span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query));
@@ -384,7 +385,8 @@
                         }
                     }
                     const query = searchInput_move.value.trim();
-                    if (query.length < 3) return;
+                    const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(query);
+                    if (query.length < 3 && !hasKorean) return;
                     const filterListItems = document.querySelectorAll('#movesFilterList .tableFilter');
                     filterListItems.forEach(item => {
                         const span = Array.from(item.querySelectorAll('span')).find(span => span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query));
@@ -514,7 +516,8 @@
 
                 function filterTrans() {
                     const query = searchInput_location.value.trim();
-                    if (query.length < 3) return;
+                    const hasKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(query);
+                    if (query.length < 3 && !hasKorean) return;
                     const filterListItems = document.querySelectorAll('#locationsFilterList .tableFilter');
                     filterListItems.forEach(item => {
                         const span = Array.from(item.querySelectorAll('span')).find(span => span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query));

@@ -1865,7 +1865,10 @@
         "Dragon": "드래곤",
         "Dark": "악",
         "Steel": "강철",
-        "Fairy": "페어리"
+        "Fairy": "페어리",
+        "Electr": "전기",
+        "Fighti": "격투",
+        "Psychi": "에스퍼"
     },
     "reverse": {
         "이상해씨": "Bulbasaur",
@@ -4937,7 +4940,7 @@
             "name": "Sandstorm",
             "Effect": "A five-turn sandstorm is summoned to hurt all combatants except Rock, Ground, and Steel types. It raises the Sp Def stat of Rock types.",
             "name_kr": "모래바람",
-            "Effect_kr": null
+            "Effect_kr": "5턴 동안 모래바람으로 바위, 땅, 강철타입 이외의 포켓몬에게 데미지를 준다."
         },
         "Giga Drain": {
             "name": "Giga Drain",
@@ -4985,7 +4988,7 @@
             "name": "Spark",
             "Effect": "The user throws an electrically charged tackle at the target. This may also leave the target with paralysis.",
             "name_kr": "스파크",
-            "Effect_kr": null
+            "Effect_kr": "전기를 둘러 돌진하여 공격한다. 마비 상태로 만들 때가 있다."
         },
         "Fury Cutter": {
             "name": "Fury Cutter",

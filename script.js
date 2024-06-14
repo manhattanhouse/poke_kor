@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      2.0
+// @version      2.1
 // @description  Translate PokeRogue Pokedex entries to Korean
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -48,6 +48,8 @@
                 const translatedType = translations.types[originalType];
                 if (translatedType) {
                     typeCell.textContent = translatedType;
+                } else if (typeCell.className && typeCell.className.includes('ELEC')) {
+                    typeCell.textContent = '전기';
                 }
             });
 

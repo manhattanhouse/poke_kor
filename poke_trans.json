@@ -9345,7 +9345,8 @@
         "Power": "위력",
         "Acc": "명중",
         "PP": "PP",
-        "Effect": "효과"
+        "Effect": "효과",
+        "Description": "설명"
     },
     "move_effect": [
         [

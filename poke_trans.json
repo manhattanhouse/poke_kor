@@ -9892,12 +9892,13 @@
         "Jungle": "정글",
         "Laboratory": "연구소",
         "Lake": "호수",
-        "Meadow": "목초지",
+        "Meadow": "초원",
         "Metropolis": "대도시",
         "Mountain": "산",
         "Plains": "평원",
         "Power Plant": "발전소",
         "Ruins": "고대 유적",
+        "Ancient Ruins": "고대 유적",
         "Sea": "바다",
         "Seabed": "해저",
         "Slum": "슬럼",
@@ -9909,6 +9910,6 @@
         "Town": "마을",
         "Volcano": "화산",
         "Wasteland": "황무지",
-        "Grassy Field": "초원"
+        "Grassy Field": "풀밭"
     }    
 }

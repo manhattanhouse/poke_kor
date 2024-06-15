@@ -4,7 +4,7 @@
 
 (모바일은 Firefox for android 앱 설치 후 확장프로그램 사용 가능합니다.)
 
-(크롬 브라우저는 확장프로그램 페이지의 개발자 모드를 켜야 작동합니다.)
+(크롬 브라우저는 확장프로그램 페이지의 개발자 모드를 켜야 Tampermonkey가 작동합니다.)
 
 
 1. 확장프로그램 Tampermonkey 혹은 Violentmonkey 설치

@@ -10234,5 +10234,15 @@
         "Volcano": "화산",
         "Wasteland": "황무지",
         "Grassy Field": "풀밭"
-    }    
+    },
+    "evol": {
+        "Level": "레벨",
+        "Mega": "메가",
+        "Giga": "거다이맥스",
+        "Item": "아이템 사용",
+        "Friendship": "친밀도"
+      },
+    "items": {
+        "Thunder Stone": "천둥의돌"
+    }
 }

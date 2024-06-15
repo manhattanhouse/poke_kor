@@ -1,6 +1,6 @@
 [https://ydarissep.github.io/PokeRogue-Pokedex/?table=speciesTable](https://ydarissep.github.io/PokeRogue-Pokedex/?table=speciesTable)
 
-위 사이트를 한국어로 번역해주는 스크립트입니다.
+위 사이트를 한국어로 번역해주는 스크립트입니다.\n
 (모바일은 Firefox for android 앱 설치 후 확장프로그램 사용 가능)
 
 1. 확장프로그램 Tampermonkey 혹은 Violentmonkey 설치

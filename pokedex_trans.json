@@ -10245,13 +10245,15 @@
         "At Day": "[낮에]",
         "At Night": "[밤에]",
         "At Dusk": "[저녁에]",
-        "At Dawn": "[아침에]",
+        "At Dawn": "[아침에]"
+      },
+    "evol_long": {
         "Friendship Move Type Fairy": "페어리 타입의 기술을 익히고 친밀도",
         "Level Remoraid Caught": "파티에 총어가 있을 때 레벨",
         "Level Atk Gt Def": "공격이 방어보다 클 때 레벨",
         "Level Atk It Def": "방어가 공격보다 클 때 레벨",
         "Level Atk Eq Def": "공격과 방어가 같을 때 레벨"
-      },
+    },
     "items": {
         "Thunder Stone": "천둥의돌"
     }

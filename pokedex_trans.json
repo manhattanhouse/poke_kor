@@ -10233,14 +10233,19 @@
         "Town": "마을",
         "Volcano": "화산",
         "Wasteland": "황무지",
-        "Grassy Field": "풀밭"
+        "Grassy Field": "풀밭",
+        "Island Beach": "섬 해변"
     },
     "evol": {
         "Level": "레벨",
         "Mega": "메가",
         "Giga": "거다이맥스",
         "Item": "아이템 사용",
-        "Friendship": "친밀도"
+        "Friendship": "친밀도",
+        "At Day": "[낮에]",
+        "At Night": "[밤에]",
+        "At Dusk": "[저녁에]",
+        "At Dawn": "[아침에]"
       },
     "items": {
         "Thunder Stone": "천둥의돌"

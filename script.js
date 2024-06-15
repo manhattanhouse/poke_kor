@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      4.0
+// @version      4.1
 // @description  PokeRogue Pokedex 항목을 한국어로 번역합니다.
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -291,6 +291,7 @@
         });
 
         mainScript();
+        document.querySelectorAll('#speciesTable tbody tr').forEach(row => translateRow(row, translations));
         
         const searchInputs = selectors.map(selector => document.querySelector(selector));
         

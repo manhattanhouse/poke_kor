@@ -3721,10 +3721,12 @@
         "초상투영": "Embody Aspect",
         "테라셸": "Tera Shell",
         "제로포밍": "Teraform Zero",
-        "Cleffa삐": "Clefairy",
-        "Cleffa딱구리": "Croagunk",
-        "Cleffa딱": "삐딱",
-        "Grassㅣㄴ": "푸린"
+        "슈퍼": "Super",
+        "슈퍼 레어": "Super",
+        "울트라": "Ultra",
+        "울트라 레어": "Ultra",
+        "슈퍼 보스": "Super Boss",
+        "울트라 보스": "Ultra Boss"
     },
     "form": {
         "Mega": "메가",

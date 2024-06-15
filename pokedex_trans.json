@@ -10262,7 +10262,8 @@
         "Level Dark Type In Party": "파티에 악 타입이 있을 때 레벨",
         "Level In Rain": "비올 때 레벨",
         "Level Move Mimic In Biome Ice Cave Snowy Forest": "[흉내내기] 기술을 익히고 \n[얼음 동굴, 눈 덮인 숲] 바이옴에서 레벨",
-        "Level Ability Own Tempo": "[마이페이스] 특성을 가진 채로 레벨"
+        "Level Ability Own Tempo": "[마이페이스] 특성을 가진 채로 레벨",
+        "Level In Biome Island Beach": "[섬, 해변] 바이옴에서 레벨"
     },
     "items": {
         "Linking Cord": "연결의끈",

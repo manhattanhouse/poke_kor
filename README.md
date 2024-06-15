@@ -2,7 +2,10 @@
 
 위 사이트를 한국어로 번역해주는 스크립트입니다.
 
-(모바일은 Firefox for android 앱 설치 후 확장프로그램 사용 가능)
+(모바일은 Firefox for android 앱 설치 후 확장프로그램 사용 가능합니다.)
+
+(크롬 브라우저는 확장프로그램 페이지의 개발자 모드를 켜야 작동합니다.)
+
 
 1. 확장프로그램 Tampermonkey 혹은 Violentmonkey 설치
 

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      4.1
+// @version      5.0
 // @description  PokeRogue Pokedex 항목을 한국어로 번역합니다.
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -10,7 +10,7 @@
 // @run-at       document-idle
 // @license      MIT
 // @downloadURL  https://greasyfork.org/ko/scripts/497838-pokerogue-pokedex-translator
-// @updateURL    https://github.com/manhattanhouse/poke_kor
+// @updateURL    https://greasyfork.org/ko/scripts/497838-pokerogue-pokedex-translator
 // ==/UserScript==
 
 (async function () {
@@ -465,6 +465,17 @@
         return false;
     }
 
+    // key to value replace 함수
+    function translateText(text, dictionary, key) {
+        if (dictionary[key]) {
+            if (dictionary[key]["name_kr"]) {
+                return text.replace(key, dictionary[key].name_kr);
+            }
+            return text.replace(key, dictionary[key]);
+        }
+        return text;
+    }
+
     // 포켓몬 상세 페이지 번역
     function speciesPage(translations) {
         const translationMappings = [
@@ -514,16 +525,38 @@
         }
 
         const evoDiv = document.querySelector('#speciesEvoTable');
+        const regex = /Item In Biome (.+) \((.+)\)/;
+        const regex_move = /Level Move ([^\(]+) \((\d+)\)/;
+        const regex_item = /\(([^)]+)\)/;
         function evoTrans(evoMethod) {
-            const transData = [
-                ['Level', '레벨'],
-                ['Mega', '메가'],
-                ['Giga', '거다이'],
-                ['Item', '아이템']
-            ]
-            transData.forEach(([orig, trans]) => {
-                evoMethod.innerText = evoMethod.innerText.replace(orig, trans);
-            })
+            Object.entries(translations.evol_long).forEach(([key, value]) => {
+                evoMethod.innerText = evoMethod.innerText.replace(key, value);
+            });
+            let match = evoMethod.innerText.match(regex);
+            if (match) {
+                evoMethod.innerText = `[${match[1]}] \n바이옴에서 아이템 사용 (${match[2]})`;
+                evoMethod.innerText = translateText(evoMethod.innerText, translations.items, match[2]);
+                let entries = Object.entries(translations.biomes);
+                entries.sort((a, b) => b[0].length - a[0].length);
+                entries.forEach(([key, value]) => {
+                    evoMethod.innerText = evoMethod.innerText.replace(key, value+', ');
+                });
+                evoMethod.innerText = evoMethod.innerText.replace(', ]', ']');
+            } else {
+                match = evoMethod.innerText.match(regex_move);
+                if (match) {
+                    evoMethod.innerText = `[${match[1].trim()}] 기술을 익히고 레벨 (${match[2]})`;
+                    evoMethod.innerText = translateText(evoMethod.innerText, translations.moves, match[1]);
+                } else {
+                    match = evoMethod.innerText.match(regex_item);
+                    if (match) {
+                        evoMethod.innerText = translateText(evoMethod.innerText, translations.items, match[1]);
+                    }
+                }
+            }
+            Object.entries(translations.evol).forEach(([key, value]) => {
+                evoMethod.innerText = evoMethod.innerText.replace(key, value);
+            });
         }
         if (evoDiv) {
             const evoMethods = evoDiv.querySelectorAll('.evoMethod');

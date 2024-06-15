@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      3.0
+// @version      4.0
 // @description  PokeRogue Pokedex 항목을 한국어로 번역합니다.
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -16,7 +16,7 @@
 (async function () {
     'use strict';
 
-    const json_url = "https://raw.githubusercontent.com/manhattanhouse/poke_kor/main/poke_trans.json";
+    const json_url = "https://raw.githubusercontent.com/manhattanhouse/poke_kor/main/pokedex_trans.json";
     const translations = await fetchJsonData(json_url);
 
     // JSON 데이터 fetch
@@ -70,8 +70,6 @@
             } else {
                 moveCell.textContent = moveData.name_kr;
             }
-            const descriptionCell = row.querySelector('.description div');
-            if (descriptionCell) descriptionCell.textContent = moveData.Effect_kr;
 
             const effectCell = row.querySelector('.effect');
             if (effectCell) {
@@ -79,7 +77,16 @@
                 if (effectTranslation) effectCell.textContent = effectTranslation[1];
             }
 
-            translateCell(row.querySelector('td.type div:first-child'), translations.types);
+            const descriptionCell = row.querySelector('.description div');
+            if (descriptionCell) {
+                if (effectCell.textContent.length > 0 && moveData.Effect_kr.length < 44) {
+                    descriptionCell.textContent = moveData.Effect_kr;
+                } else {
+                    descriptionCell.outerHTML = moveData.Effect_kr.includes(". ") ? moveData.Effect_kr.replace(". ", ". \n").split("\n").map(part => `<div>${part}</div>`).join("") : splitMiddle(moveData.Effect_kr, 35).map(part => `<div>${part}</div>`).join("");
+                }
+            }
+
+            translateCell(row.querySelector('td.type div:first-child'), translations.types, 'TYPE_');
         }
     }
 
@@ -241,18 +248,22 @@
             }
         }
     }
-
+    
     let previousUrl = window.location.href;
     let previousHeight = 0;
+    let previousHeightAb = 0;
 
     function checkUrlChange() {
         const currentUrl = window.location.href;
         const currentHeight = document.querySelector("#locationsTable").offsetHeight;
+        const currentHeightAb = document.querySelector("#abilitiesTable").offsetHeight;
 
         if (currentUrl !== previousUrl || previousHeight !== currentHeight) {
             previousUrl = currentUrl;
             previousHeight = currentHeight
             mainScript();
+        } else if (previousHeightAb !== currentHeightAb) {
+            transAbilities();
         }
     }
 
@@ -267,8 +278,8 @@
         document.querySelectorAll('#movesTableTbody tr').forEach(row => translateMovesRow(row, translations));
     });
 
-    const selectors = ['#speciesInput', '#movesInput', '#locationsInput'];
-    const filterSelectors = ['#speciesFilterList .tableFilter', '#movesFilterList .tableFilter', '#locationsFilterList .tableFilter'];
+    const selectors = ['#speciesInput', '#movesInput', '#locationsInput', '#abilitiesInput'];
+    const filterSelectors = ['#speciesFilterList .tableFilter', '#movesFilterList .tableFilter', '#locationsFilterList .tableFilter', false];
 
     setTimeout(() => {
         const locationsBody = document.querySelector('#locationsTableTbody');
@@ -294,14 +305,19 @@
 
         // 검색창 한국어 -> 영어 변환
         searchInputs.forEach((input, index) => {
-            const filterSelector = filterSelectors[index];
             input.addEventListener('keyup', (event) => {
+                const filterSelector = filterSelectors[index];
                 if (event.key === 'Enter') {
                     const query = input.value.trim();
-                    let value = translations.reverse[query] || 
-                        Object.keys(translations.biomes).find(key => translations.biomes[key] === query) ||
-                            Object.keys(translations.rarityHead).find(key => translations.rarityHead[key] === query) || 
-                                reverseTranslatorMove(query);
+                    let value = '';
+                    if (filterSelector) {
+                        value = translations.reverse[query] || 
+                            Object.keys(translations.biomes).find(key => translations.biomes[key] === query) ||
+                                Object.keys(translations.rarityHead).find(key => translations.rarityHead[key] === query) || 
+                                    reverseTranslatorMove(query);
+                    } else {
+                        value = Object.keys(translations.abilities).find(key => translations.abilities[key] === query);
+                    }
                     if (value) {
                         setTimeout(() => {
                             input.value = value;
@@ -309,6 +325,7 @@
                     }
                     checkUrlChange();
                 }
+                if (!filterSelector) return;
                 setTimeout(() => { toggleFilter(input, filterSelector); }, 100);        
             });
         });
@@ -396,7 +413,38 @@
             });
 
             translateSpeciesFilterList(document.querySelectorAll('#locationsFilterList .tableFilter'));
+        } else if (currentUrl.includes('?table=abilitiesTable')) {
+            document.querySelectorAll('#abilitiesTableThead th').forEach(th => {
+                if (th.className == 'ability') th.textContent = '이름';
+                else if (th.className == 'description') th.textContent = '설명';
+            });
+            transAbilities();
         }
+    }
+
+    // 특성 페이지 번역 함수
+    function transAbilities() {
+        const cells = document.querySelectorAll('#abilitiesTableTbody td.ability');
+        cells.forEach(cell => {
+            const childNodes = cell.childNodes;
+            if (childNodes) {
+                const textNode = childNodes[0];
+                const parts = textNode.textContent.split(' (');
+                const key = parts[0];
+                if (translations.abilities[key]) {
+                    const des_key = translations.abilities[key];
+                    if (parts[1]) {
+                        textNode.textContent = `${des_key} (${parts[1]}`;
+                    } else {
+                        textNode.textContent = des_key;
+                    }
+                    const des = cell.nextElementSibling;
+                    if (des && translations.abilities_kr[des_key]) {
+                        des.textContent = translations.abilities_kr[des_key];
+                    }
+                }
+            }
+        })
     }
 
     // 기술 페이지 역번역 함수
@@ -450,6 +498,8 @@
             abilities.querySelectorAll('span.hyperlink').forEach(link => {
                 if (translations.abilities[link.innerText]) {
                     link.innerText = translations.abilities[link.innerText];
+                    const des = link.nextElementSibling;
+                    des.textContent = translations.abilities_kr[link.innerText.split(' ')[0]];
                 }
             });
         }

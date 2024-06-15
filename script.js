@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      2.6
-// @description  Translate PokeRogue Pokedex entries to Korean
+// @version      3.0
+// @description  PokeRogue Pokedex 항목을 한국어로 번역합니다.
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=github.io
@@ -13,777 +13,557 @@
 // @updateURL    https://github.com/manhattanhouse/poke_kor
 // ==/UserScript==
 
-(function() {
+(async function () {
     'use strict';
 
+    const json_url = "https://raw.githubusercontent.com/manhattanhouse/poke_kor/main/poke_trans.json";
+    const translations = await fetchJsonData(json_url);
+
+    // JSON 데이터 fetch
     async function fetchJsonData(url) {
         const response = await fetch(url);
-        return await response.json();
+        return response.json();
     }
 
-    async function main() {
-        const json_url = "https://raw.githubusercontent.com/manhattanhouse/poke_kor/main/poke_trans.json";
-        const translations = await fetchJsonData(json_url);
-        const reverseTranslations = translations.reverse;
-        mainScript();
-        function mainScript() {
-            const searchInput = document.querySelector('#speciesInput');
-            const searchInput_move = document.querySelector('#movesInput');
-            const searchInput_location = document.querySelector('#locationsInput');
-
-            addButtonsEventListener();
-
-            function translateRow(row) {
-                const nameCell = row.querySelector('.nameContainer .species');
-                const typeCells = row.querySelectorAll('.types .background');
-                const abilityCells = row.querySelectorAll('.abilities div');
-
-                const originalName = nameCell.textContent.trim();
-                const translatedName = translations.names[originalName];
-                if (translatedName) {
-                    nameCell.textContent = translatedName;
-                }
-
-                typeCells.forEach(typeCell => {
-                    const originalType = typeCell.textContent.trim();
-                    const translatedType = translations.types[originalType];
-                    if (translatedType) {
-                        typeCell.textContent = translatedType;
-                    } else if (typeCell.className && typeCell.className.includes('TYPE_')) {
-                        const key = lowerText(typeCell.className.split(' ')[0].replace('TYPE_', ''));
-                        typeCell.textContent = translations.types[key];
-                    }
-                });
-
-                abilityCells.forEach(abilityCell => {
-                    const originalAbility = abilityCell.textContent.trim();
-                    const translatedAbility = translations.abilities[originalAbility];
-                    if (translatedAbility) {
-                        abilityCell.textContent = translatedAbility;
-                    }
-                });
-
-                const statCells = row.querySelectorAll('.italic');
-                statCells.forEach(statCell => {
-                    const originalStat = statCell.textContent.trim();
-                    const translatedStat = translations.headers[originalStat];
-                    if (translatedStat) {
-                        statCell.textContent = translatedStat;
-                    }
-                });
-            }
-
-            function translateMovesRow(row) {
-                const moveCell = row.querySelector('.move');
-                const originalMoveText = moveCell.textContent.replace(/\(.\)/, '').trim();
-                const moveData = translations.moves[originalMoveText];
-                if (moveData) {
-                    moveCell.textContent = moveData.name_kr;
-                    const descriptionCell = row.querySelector('.description div');
-                    if (descriptionCell) {
-                        descriptionCell.textContent = moveData.Effect_kr;
-                    }
-
-                    const effectCell = row.querySelector('.effect');
-                    if (effectCell) {
-                        const originalEffectText = effectCell.textContent.trim();
-                        const effectTranslation = translations.move_effect.find(effect => effect[0] === originalEffectText);
-                        if (effectTranslation) {
-                            effectCell.textContent = effectTranslation[1];
-                        }
-                    }
-
-                    const typeCell = row.querySelector('td.type div:first-child');
-                    if (typeCell) {
-                        const originalTypeText = typeCell.textContent.trim();
-                        const translatedTypeText = translations.types[originalTypeText];
-                        if (translatedTypeText) {
-                            typeCell.textContent = translatedTypeText;
-                        }
-                    }
-                }
-            }
-
-            function translateHeader(headers, translations) {
-                headers.forEach(cell => {
-                    const originalHeader = cell.textContent.trim();
-                    const translatedHeader = translations[originalHeader];
-                    if (translatedHeader) {
-                        cell.textContent = translatedHeader;
-                    }
-                });
-            }
-
-            function translatePopup() {
-                const popup = document.getElementById('popup');
-                if (popup) {
-                    const title = popup.querySelector('h2');
-                    const moveData = translations.moves[title.textContent.trim()];
-                    if (moveData) {
-                        title.textContent = moveData.name_kr;
-
-                        const description = popup.querySelector('.popupTrainerMoveDescription');
-                        if (description) {
-                            description.textContent = moveData.Effect_kr;
-                        }
-
-                        const statElements = popup.querySelectorAll('.popupTrainerMoveStat');
-                        statElements.forEach(stat => {
-                            Object.keys(translations.moves_head).forEach(key => {
-                                if (stat.innerText.includes(key)) {
-                                    stat.innerText = stat.innerText.replace(key, translations.moves_head[key]);
-                                }
-                            });
-                        });
-
-                        const effectElement = popup.querySelector('.popupTrainerMoveEffect');
-                        if (effectElement) {
-                            const originalEffectText = effectElement.textContent.trim();
-                            const effectTranslation = translations.move_effect.find(effect => effect[0] === originalEffectText);
-                            if (effectTranslation) {
-                                effectElement.textContent = effectTranslation[1];
-                            }
-                        }
-
-                        const typeElement = popup.querySelector('.popupTrainerMoveType');
-                        if (typeElement) {
-                            const originalTypeText = typeElement.textContent.trim();
-                            const translatedTypeText = translations.types[originalTypeText];
-                            if (translatedTypeText) {
-                                typeElement.textContent = translatedTypeText;
-                            }
-                        }
-
-                        const filterButton = popup.querySelector('.popupFilterButton');
-                        if (filterButton) {
-                            filterButton.textContent = '필터';
-                        }
-
-                        const filterLinks = popup.querySelectorAll('.hyperlink');
-                        filterLinks.forEach(link => {
-                            for (var filter of translations.move_filters) {
-                                if (filter[0] == link.innerText) {
-                                    link.innerText = filter[1];
-                                    break;
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-            function observeElement(selector, callback) {
-                const targetNode = document.body;
-
-                const config = { childList: true, subtree: true };
-
-                const callbackFunction = function(mutationsList, observer) {
-                    for (let mutation of mutationsList) {
-                        if (mutation.type === 'childList') {
-                            const element = document.querySelector(selector);
-                            if (element) {
-                                observer.disconnect();
-                                setTimeout(() => {
-                                    callback();
-                                }, 1000);
-                                break;
-                            }
-                        }
-                    }
-                };
-
-                const observer = new MutationObserver(callbackFunction);
-
-                observer.observe(targetNode, config);
-            }
-
-            function translateSpeciesFilterList() {
-                const filterListItems = document.querySelectorAll('#speciesFilterList .tableFilter');
-                const filterListItems_move = document.querySelectorAll('#movesFilterList .tableFilter');
-                if (filterListItems) {
-                    filterListItems.forEach(item => {
-                        const spans = item.querySelectorAll('span');
-                        if (spans.length >= 2) {
-                            const firstSpan = spans[0];
-                            const secondSpan = spans[1];
-                            if (!secondSpan.hasAttribute('data-original-text')) {
-                                const className = firstSpan.className.trim();
-                                const originalText = secondSpan.textContent.trim();
-                                secondSpan.setAttribute('data-original-text', originalText); // Store original text in data attribute
-                                if (className === 'Form') {
-                                    firstSpan.textContent = '폼: ';
-                                    const translatedForm = translations.form[originalText];
-                                    if (translatedForm) {
-                                        secondSpan.textContent = translatedForm;
-                                    }
-                                } else if (className === 'Type') {
-                                    firstSpan.textContent = '타입: ';
-                                    const translatedType = translations.types[originalText];
-                                    if (translatedType) {
-                                        secondSpan.textContent = translatedType;
-                                    }
-                                } else if (className === 'Ability') {
-                                    firstSpan.textContent = '어빌리티: ';
-                                    const translatedAbility = translations.abilities[originalText];
-                                    if (translatedAbility) {
-                                        secondSpan.textContent = translatedAbility;
-                                    }
-                                } else if (className === 'Move') {
-                                    firstSpan.textContent = '기술: ';
-                                    for (let key in translations.moves) {
-                                        let name = translations.moves[key].name;
-                                        let name_kr = translations.moves[key].name_kr;
-                                        if (name.includes(originalText)) {
-                                            secondSpan.textContent = name_kr;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-                if (filterListItems_move) {
-                    filterListItems_move.forEach(item => {
-                        const spans = item.querySelectorAll('span');
-                        if (spans.length >= 2) {
-                            const firstSpan = spans[0];
-                            const secondSpan = spans[1];
-                            if (!secondSpan.hasAttribute('data-original-text')) {
-                                const className = firstSpan.className.trim();
-                                const originalText = secondSpan.textContent.trim();
-                                secondSpan.setAttribute('data-original-text', originalText);
-                                for (var filter of translations.move_filters) {
-                                    if (filter[0] == originalText) {
-                                        secondSpan.textContent = filter[1];
-                                    }
-                                }
-                                if (className === 'Split') {
-                                    firstSpan.textContent = '분류: ';
-                                } else if (className === 'Flag') {
-                                    firstSpan.textContent = '플래그: ';
-                                } else if (className === 'Target') {
-                                    firstSpan.textContent = '목표: ';
-                                } else if (className === 'Type') {
-                                    firstSpan.textContent = '타입: ';
-                                    const translatedType = translations.types[originalText];
-                                    if (translatedType) {
-                                        secondSpan.textContent = translatedType;
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-
-            if (window.location.href.includes('?table=speciesTable')) {
-                const speciesHeaderCells = document.querySelectorAll('#speciesTableThead th');
-                translateHeader(speciesHeaderCells, translations.headers);
-
-                const rows = document.querySelectorAll('#speciesTable tbody tr');
-                rows.forEach(translateRow);
-
-                const observer = new MutationObserver(callback);
-                const config = { childList: true, subtree: true };
-
-                const targetNode = document.querySelector('#speciesTable tbody');
-                observer.observe(targetNode, config);
-
-                searchInput.addEventListener('input', function() {
-                    const query = searchInput.value;
-                    if (reverseTranslations[query]) {
-                        setTimeout(() => {
-                            searchInput.value = reverseTranslations[query];
-                            searchInput.blur();
-                            searchInput.focus();
-                        }, 0);
-                    }
-                });
-
-                function callback(mutationsList, observer) {
-                    for (const mutation of mutationsList) {
-                        if (mutation.type === 'childList') {
-                            mutation.addedNodes.forEach(node => {
-                                if (node.nodeType === 1 && node.tagName === 'TR') {
-                                    translateRow(node);
-                                }
-                            });
-                        }
-                    }
-                    const query = searchInput.value;
-                    if (query.length < 3) return;
-                    const filterListItems = document.querySelectorAll('#speciesFilterList .tableFilter');
-                    filterListItems.forEach(item => {
-                        const span = Array.from(item.querySelectorAll('span')).find(span => span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query));
-                        if (span) {
-                            item.classList.remove('hide');
-                        }
-                    });
-                }
-
-                const variantNode = document.querySelector('#onlyShowVariantPokemon');
-                variantNode.innerText = '변종';
-
-                translateSpeciesFilterList();
-                observeElement('.tableFilter', translateSpeciesFilterList);
-
-            } else if (window.location.href.includes('?table=movesTable')) {
-                const moveHeaderCells = document.querySelectorAll('#movesTableThead th');
-                translateHeader(moveHeaderCells, translations.moves_head);
-
-                const moveRows = document.querySelectorAll('#movesTableTbody tr');
-                moveRows.forEach(translateMovesRow);
-
-                const observer = new MutationObserver(callbackMoves);
-                const config = { childList: true, subtree: true };
-
-                const targetNode = document.querySelector('#movesTableTbody');
-                observer.observe(targetNode, config);
-
-                function reverseTranslatorMove(query) {
-                    if (translations.move_reverse[query]) {
-                        return translations.move_reverse[query];
-                    }
-                    for (var filter of translations.move_filters) {
-                        if (filter[1] == query) {
-                            return filter[0];
-                        }
-                    }
-                    for (var move in translations.moves) {
-                        if (translations.moves[move].name_kr == query) {
-                            return move;
-                        }
-                    }
-                    for (var type in translations.types) {
-                        if (translations.types[type] == query) {
-                            return type;
-                        }
-                    }
-                    return false;
-                }
-
-                searchInput_move.addEventListener('input', function() {
-                    const query = searchInput_move.value;
-                    const reverseQuery = reverseTranslatorMove(query);
-                    if (reverseQuery) {
-                        setTimeout(() => {
-                            searchInput_move.value = reverseQuery;
-                            searchInput_move.blur();
-                            searchInput_move.focus();
-                        }, 0);
-                    }
-                });
-
-                function callbackMoves(mutationsList, observer) {
-                    for (const mutation of mutationsList) {
-                        if (mutation.type === 'childList') {
-                            mutation.addedNodes.forEach(node => {
-                                if (node.nodeType === 1 && node.tagName === 'TR') {
-                                    translateMovesRow(node);
-                                }
-                            });
-                        }
-                    }
-                    const query = searchInput_move.value.trim();
-                    if (query.length < 3) return;
-                    const filterListItems = document.querySelectorAll('#movesFilterList .tableFilter');
-                    filterListItems.forEach(item => {
-                        const span = Array.from(item.querySelectorAll('span')).find(span => span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query));
-                        if (span) {
-                            item.classList.remove('hide');
-                        }
-                    });
-                }
-
-                const popupObserver = new MutationObserver(translatePopup);
-                const popupConfig = { childList: true, subtree: true };
-                const popupNode = document.getElementById('popup');
-                if (popupNode) {
-                    popupObserver.observe(popupNode, popupConfig);
-                }
-
-                translateSpeciesFilterList();
-                observeElement('.tableFilter', translateSpeciesFilterList);
-            } else if (window.location.href.includes('?species')) {
-                speciesPage();
-                const biomesCon = document.querySelector('#speciesPanelBiomesContainer');
-                biomesCon.querySelector('.speciesPanelText').innerText = '바이옴:';
-                const biomeLinks = biomesCon.querySelectorAll('.hyperlink');
-                biomeLinks.forEach(link => {
-                    if (translations.biomes[link.innerText]) {
-                        link.innerText = translations.biomes[link.innerText];
-                    }
-                });
-            } else if (window.location.href.includes('?table=locationsTable')) {
-                const variantNode = document.querySelector('#onlyShowVariantPokemonLocations');
-                variantNode.innerText = '변종';
-
-                function transNodes(nodes, jsonData) {
-                    nodes.forEach(node => {
-                        if (jsonData[node.innerText]) {
-                            node.innerText = jsonData[node.innerText];
-                        }
-                    });
-                }
-                const nameNodes = document.querySelectorAll('.locationSpeciesName');
-                transNodes(nameNodes, translations.names);
-                const rarityNodes = document.querySelectorAll('.rarityTableThead');
-                transNodes(rarityNodes, translations.rarityHead);
-                const locationNodes = document.querySelectorAll('.locationName');
-                transNodes(locationNodes, translations.biomes);
-                const previousLinkInfos = document.querySelectorAll('.previousLinkInfo');
-                previousLinkInfos.forEach(node => {
-                    const parts = node.innerText.split('\n');
-                    if (translations.biomes[parts[0]]) {
-                        node.innerText = translations.biomes[parts[0]] + '\n' + parts[1];
-                    }
-                });
-                const nextLinkInfos = document.querySelectorAll('.nextLinkInfo');
-                nextLinkInfos.forEach(node => {
-                    const parts = node.innerText.split('\n');
-                    if (translations.biomes[parts[0]]) {
-                        node.innerText = translations.biomes[parts[0]] + '\n' + parts[1];
-                    }
-                });
-
-                const timeData = {
-                    "Dawn": "아침",
-                    "Day": "낮",
-                    "Dusk": "저녁",
-                    "Night": "밤"
-                }
-                
-                const timeNodes = document.querySelectorAll('.timeOfDay');
-                transNodes(timeNodes, timeData);
-
-                const filterListItems_location = document.querySelectorAll('#locationsFilterList .tableFilter');
-                if (filterListItems_location) {
-                    filterListItems_location.forEach(item => {
-                        const spans = item.querySelectorAll('span');
-                        if (spans.length >= 2) {
-                            const firstSpan = spans[0];
-                            const secondSpan = spans[1];
-                            if (!secondSpan.hasAttribute('data-original-text')) {
-                                const className = firstSpan.className.trim();
-                                const originalText = secondSpan.textContent.trim();
-                                secondSpan.setAttribute('data-original-text', originalText); // Store original text in data attribute
-                                if (className === 'Form') {
-                                    firstSpan.textContent = '폼: ';
-                                    const translatedForm = translations.form[originalText];
-                                    if (translatedForm) {
-                                        secondSpan.textContent = translatedForm;
-                                    }
-                                } else if (className === 'Type') {
-                                    firstSpan.textContent = '타입: ';
-                                    const translatedType = translations.types[originalText];
-                                    if (translatedType) {
-                                        secondSpan.textContent = translatedType;
-                                    }
-                                } else if (className === 'Ability') {
-                                    firstSpan.textContent = '어빌리티: ';
-                                    const translatedAbility = translations.abilities[originalText];
-                                    if (translatedAbility) {
-                                        secondSpan.textContent = translatedAbility;
-                                    }
-                                } else if (className === 'Biome') {
-                                    firstSpan.textContent = '바이옴: ';
-                                    const translatedBiome = translations.biomes[originalText];
-                                    if (translatedBiome) {
-                                        secondSpan.textContent = translatedBiome;
-                                    }
-                                } else if (className === 'Move') {
-                                    firstSpan.textContent = '기술: ';
-                                    for (let key in translations.moves) {
-                                        let name = translations.moves[key].name;
-                                        let name_kr = translations.moves[key].name_kr;
-                                        if (name.includes(originalText)) {
-                                            secondSpan.textContent = name_kr;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-
-                
-                const observer = new MutationObserver(callbackLocation);
-                const config = { childList: true, subtree: true };
-
-                const targetNode = document.querySelector('#locationsTableTbody');
-                observer.observe(targetNode, config);
-
-                function filterTrans() {
-                    const query = searchInput_location.value.trim();
-                    if (query.length < 3) return;
-                    const filterListItems = document.querySelectorAll('#locationsFilterList .tableFilter');
-                    filterListItems.forEach(item => {
-                        const span = Array.from(item.querySelectorAll('span')).find(span => span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query));
-                        if (span) {
-                            item.classList.remove('hide');
-                        }
-                    });
-                }
-
-                function callbackLocation(mutationsList, observer) {
-                    filterTrans();
-                }
-
-                searchInput_location.addEventListener('input', function() {
-                    const query = searchInput_location.value.trim();
-                    let value = '';
-                    if (reverseTranslations[query]) {
-                        value = reverseTranslations[query];
-                    } else {
-                        for (var key in translations.biomes) {
-                            if (query == translations.biomes[key]) {
-                                value = key;
-                            }
-                        }
-                        for (var key in translations.rarityHead) {
-                            if (query == translations.rarityHead[key]) {
-                                value = key;
-                            }
-                        }
-                    }
-                    if (value) {
-                        setTimeout(() => {
-                            searchInput_location.value = value;
-                            searchInput_location.blur();
-                            searchInput_location.focus();
-                        }, 0);
-                    }
-                });
-            }
-
-            function speciesPage() {
-                function transKey(selector, key) {
-                    const element = document.querySelector(selector);
-                    element.setAttribute('check', 'on');
-                    let name_key = element.innerText;
-                    if (key == 'types') name_key = lowerText(name_key);
-                    if (element && translations[key][name_key]) {
-                        element.innerText = translations[key][name_key];
-                    }
-                }
-                function transText(selector, text) {
-                    const element = document.querySelector(selector);
-                    if (element) {
-                        element.innerText = text;
-                    }
-                }
-                transKey('#speciesName', 'names');
-                transKey('#speciesType1', 'types');
-                transKey('#speciesType2', 'types');
-                transKey('#speciesType3', 'types');
-                transText('#speciesTypesText', '타입:');
-                transText('#speciesEggGroupsText', '코스트:');
-                transText('#speciesAbilitiesText', '특성:');
-                transText('#speciesEvolutionsText', '진화:');
-                transText('#speciesFormesText', '폼:');
-        
-                const abilities = document.querySelector('#speciesAbilities');
-                const abilityLinks = abilities.querySelectorAll('span.hyperlink');
-                abilityLinks.forEach(link => {
-                    if (translations.abilities[link.innerText]) {
-                        link.innerText = translations.abilities[link.innerText];
-                    }
-                });
-        
-                const stats = document.querySelector('#statsSection');
-                let replaceNames = {
-                    "Atk": "공격",
-                    "Def": "방어",
-                    "SpA": "특공",
-                    "SpD": "특방",
-                    "Spe": "속도",
-                    "BST": "합계"
-                };
-                Object.entries(replaceNames).forEach(([key, value]) => {
-                    const regex = new RegExp(key, 'g');
-                    stats.innerHTML = stats.innerHTML.replace(regex, value);
-                });
-                /*
-                const evolution = document.querySelector('#speciesEvoTable');
-                replaceNames = {
-                    "Level": "레벨",
-                    "Mega": "메가",
-                    "Giga": "거다이",
-                    "item": "아이템"
-                };
-                if (evolution) {
-                    Object.entries(replaceNames).forEach(([key, value]) => {
-                        const regex = new RegExp(key, 'g');
-                        evolution.innerHTML = evolution.innerHTML.replace(regex, value);
-                    });
-                }*/
-        
-                const formDiv = document.querySelector('#speciesFormes');
-                if (formDiv) {
-                    const forms = formDiv.querySelectorAll('.underline');
-                    forms.forEach(form => {
-                        if (translations.names[form.innerText]) {
-                            form.innerText = translations.names[form.innerText];
-                        }
-                    });
-                }
-        
-                const defensive = document.querySelector('#speciesDefensiveTypeChartContainer');
-                defensive.querySelector('.bold').innerText = "공격받을 때";
-                const offensive = document.querySelector('#speciesOffensiveTypeChartContainer');
-                offensive.querySelector('.bold').innerText = "공격할 때";
-                let types = defensive.querySelectorAll('.backgroundSmall');
-                types.forEach(type => {
-                    const type_name = type.className.split(' ')[1]
-                    if (type_name.includes('TYPE')) {
-                        const key = lowerText(type_name.replace('TYPE_', ''));
-                        if (translations.types[key]) {
-                            type.innerText = translations.types[key];
-                        }
-                    }
-                });
-                types = offensive.querySelectorAll('.backgroundSmall');
-                types.forEach(type => {
-                    const type_name = type.className.split(' ')[1]
-                    if (type_name.includes('TYPE')) {
-                        const key = lowerText(type_name.replace('TYPE_', ''));
-                        if (translations.types[key]) {
-                            type.innerText = translations.types[key];
-                        }
-                    }
-                });
-                
-                const moveTables = document.querySelectorAll('.speciesPanelLearnsetsTableMargin');
-                let transTexts = {
-                    "Egg Moves": "유전 기술",
-                    "Level-Up": "레벨업",
-                    "TM/HM": "기술머신/비전머신"
-                };            
-                moveTables.forEach(table => {
-                    let shift = 0;
-                    const ths = table.querySelector('thead').querySelectorAll('th');
-                    ths.forEach(th => {
-                        if (translations.moves_head[th.innerText]) {
-                            th.innerText = translations.moves_head[th.innerText];
-                        } else if (th.innerText == 'Level' || th.innerText == '레벨') {
-                            th.innerText = '레벨';
-                            shift = 1;
-                        }
-                    });
-                    const caption = table.querySelector('caption.bold');
-                    const text = caption.innerHTML.split('\n')[0].trim();
-                    if (transTexts[text]) {
-                        caption.innerHTML = caption.innerHTML.replace(text, transTexts[text]);
-                    }
-                    const moveRows = table.querySelectorAll('tr');
-                    moveRows.forEach(row => {
-                        const cells = row.querySelectorAll('td');
-                        const nameCell = cells[0+shift];
-                        if (nameCell) {
-                            const effectCell = cells[6+shift];
-                            let move = null;
-                            for (var name_key in translations.moves) {
-                                if (translations.moves[name_key].name == nameCell.innerText) {
-                                    move = translations.moves[name_key];
-                                }
-                            }
-                            if (move) {
-                                nameCell.innerText = move.name_kr;
-                                if (move.Effect_kr) {
-                                    if (move.Effect_kr.includes(". ")) {
-                                        const parts = move.Effect_kr.replace(". ", ". \n").split("\n");
-                                        effectCell.innerHTML = parts.map(part => `<div>${part}</div>`).join("");
-                                    } else {
-                                        const parts = splitMiddle(move.Effect_kr, 35);
-                                        effectCell.innerHTML = parts.map(part => `<div>${part}</div>`).join("");
-                                    }
-                                }
-                            }
-                            const typeCell = cells[1+shift];
-                            const typeDiv = typeCell.querySelector('div');
-                            if (typeDiv) {
-                                const type = typeDiv.className.split(' ')[0].replace('TYPE_', '');
-                                const key = lowerText(type);
-                                if (translations.types[key]) {
-                                    typeDiv.innerText = translations.types[key]
-                                }
-                            }
-                        }
-                    });
-                });
-            }
-            /*
-            const nameNode = document.querySelector('#speciesName');
-            const config = { childList: true, subtree: true, characterData: true };
-            const cooldownTime = 100;
-            let isCooldown = false;
-            const callback = function(mutationsList, observer) {
-                if (isCooldown) {
-                    return;
-                }
-                speciesPage();
-                isCooldown = true;
-                setTimeout(() => {
-                    isCooldown = false;
-                }, cooldownTime);
-            };
-            const observer = new MutationObserver(callback);
-            observer.observe(nameNode, config);*/
-            const observer = new MutationObserver(checkUrlChange);
-            observer.observe(document, { childList: true, subtree: true });
-        }
-    
-        let previousUrl = window.location.href;
-        let tableHeight = 0;
-        function checkUrlChange() {
-            const currentUrl = window.location.href;
-            const currentHeight = document.querySelector("#table").offsetHeight;
-            if (currentUrl !== previousUrl || currentHeight !== tableHeight) {
-                previousUrl = currentUrl;
-                tableHeight = currentHeight;
-                mainScript();
-            }
-        }
-    }
-
+    // 첫 글자를 제외하고 소문자로 변경
     function lowerText(text) {
         return text.charAt(0) + text.slice(1).toLowerCase();
     }
 
+    // 메뉴 번역
     function addButtonsEventListener() {
-        const tableButtonDiv = document.getElementById('tableButton');
-        const buttons = tableButtonDiv.getElementsByTagName('button');
-        let buttonTexts = [
-            "특성", "포켓몬", "기술", "바이옴", "트레이너", "아이템"
-        ];
-        var count = 0;
-        for (let button of buttons) {
-            button.innerText = buttonTexts[count];
-            count += 1; /*
-            button.addEventListener('click', function() {
-                main();
-            }); */
+        const buttons = document.getElementById('tableButton').getElementsByTagName('button');
+        const buttonTexts = ["특성", "포켓몬", "기술", "바이옴", "트레이너", "아이템"];
+        Array.from(buttons).forEach((button, index) => {
+            button.innerText = buttonTexts[index];
+        });
+    }
+
+    // 셀 번역
+    function translateCell(cell, translationDict, classPrefix = '') {
+        const originalText = cell.textContent.trim();
+        const translatedText = translationDict[originalText] || translationDict[lowerText(cell.className.split(' ')[0].replace(classPrefix, ''))];
+        if (translatedText) {
+            cell.textContent = translatedText;
         }
     }
-    setTimeout(main, 1000);
+
+    // 행 번역
+    function translateRow(row, translations) {
+        translateCell(row.querySelector('.nameContainer .species'), translations.names);
+        row.querySelectorAll('.types .background').forEach(cell => translateCell(cell, translations.types, 'TYPE_'));
+        row.querySelectorAll('.abilities div').forEach(cell => translateCell(cell, translations.abilities));
+        row.querySelectorAll('.italic').forEach(cell => translateCell(cell, translations.headers));
+    }
+
+    // 기술 행 번역
+    function translateMovesRow(row, translations) {
+        const moveCell = row.querySelector('.move');
+        const originalText = moveCell.textContent.trim();
+        const matchedText = originalText.match(/\((.)\)/);
+        const originalMoveText = moveCell.textContent.replace(/\(.\)/, '').trim();
+        const moveData = translations.moves[originalMoveText];
+
+        if (moveData) {
+            if (matchedText) {
+                moveCell.textContent = `${moveData.name_kr} (${matchedText[1]})`;
+            } else {
+                moveCell.textContent = moveData.name_kr;
+            }
+            const descriptionCell = row.querySelector('.description div');
+            if (descriptionCell) descriptionCell.textContent = moveData.Effect_kr;
+
+            const effectCell = row.querySelector('.effect');
+            if (effectCell) {
+                const effectTranslation = translations.move_effect.find(effect => effect[0] === effectCell.textContent.trim());
+                if (effectTranslation) effectCell.textContent = effectTranslation[1];
+            }
+
+            translateCell(row.querySelector('td.type div:first-child'), translations.types);
+        }
+    }
+
+    // 헤더 번역
+    function translateHeader(headers, translations) {
+        headers.forEach(cell => translateCell(cell, translations));
+    }
+
+    // 필터 목록 번역
+    function translateSpeciesFilterList(tableFilters) {
+        tableFilters.forEach(item => {
+            const spans = item.querySelectorAll('span');
+            if (spans.length >= 2) {
+                const firstSpan = spans[0];
+                const secondSpan = spans[1];
+                if (!secondSpan.hasAttribute('data-original-text')) {
+                    const originalText = secondSpan.textContent.trim();
+                    secondSpan.setAttribute('data-original-text', originalText);
+                    const className = firstSpan.className.trim();
+
+                    const translationOptions = {
+                        "Form": {
+                            "text": "폼: ",
+                            "data": translations.form
+                        },
+                        "Type": {
+                            "text": "타입: ",
+                            "data": translations.types
+                        },
+                        "Ability": {
+                            "text": "특성: ",
+                            "data": translations.abilities
+                        },
+                        "Biome": {
+                            "text": "바이옴: ",
+                            "data": translations.biomes
+                        },
+                        "Split": {
+                            "text": "분류: "
+                        },
+                        "Flag": {
+                            "text": "플래그: "
+                        },
+                        "Target": {
+                            "text": "타겟: "
+                        }
+                    }
+
+                    const option = translationOptions[className]
+                    let translatedText = '';
+
+                    if (option && option['data']) {
+                        translatedText = option.data[originalText];
+                        firstSpan.innerText = option.text;
+                    } else if (option) {
+                        for (var filter of translations.move_filters) {
+                            if (filter[0] == originalText) {
+                                translatedText = filter[1];
+                                break;
+                            }
+                        }
+                        firstSpan.innerText = option.text;
+                    } else if (className == 'Move') {
+                        Object.values(translations.moves).forEach(({ name, name_kr }) => {
+                            if (name.includes(originalText)) {
+                                translatedText = name_kr;
+                            }
+                        });
+                        firstSpan.innerText = '기술: ';
+                    }
+
+                    if (translatedText) {
+                        secondSpan.textContent = translatedText;
+                    }
+                }
+            }
+        });
+    }
+
+    // 팝업 번역
+    function translatePopup(translations) {
+        const popup = document.getElementById('popup');
+        if (popup) {
+            const title = popup.querySelector('h2');
+            const originalText = title.textContent.trim();
+            const matchedText = originalText.match(/\((.)\)/);
+            const originalMoveText = title.textContent.replace(/\(.\)/, '').trim();
+            const moveData = translations.moves[originalMoveText];
+            if (moveData) {
+                if (matchedText) {
+                    title.textContent = `${moveData.name_kr} (${matchedText[1]})`;
+                } else {
+                    title.textContent = moveData.name_kr;
+                }
+                const description = popup.querySelector('.popupTrainerMoveDescription');
+                if (description) description.textContent = moveData.Effect_kr;
+
+                popup.querySelectorAll('.popupTrainerMoveStat').forEach(stat => {
+                    Object.keys(translations.moves_head).forEach(key => {
+                        if (stat.innerText.includes(key)) {
+                            stat.innerText = stat.innerText.replace(key, translations.moves_head[key]);
+                        }
+                    });
+                });
+
+                const effectElement = popup.querySelector('.popupTrainerMoveEffect');
+                if (effectElement) {
+                    const effectTranslation = translations.move_effect.find(effect => effect[0] === effectElement.textContent.trim());
+                    if (effectTranslation) effectElement.textContent = effectTranslation[1];
+                }
+
+                translateCell(popup.querySelector('.popupTrainerMoveType'), translations.types);
+                popup.querySelector('.popupFilterButton').textContent = '필터';
+                popup.querySelectorAll('.hyperlink').forEach(link => {
+                    const filterTranslation = translations.move_filters.find(filter => filter[0] == link.innerText);
+                    if (filterTranslation) link.innerText = filterTranslation[1];
+                });
+            }
+        }
+    }
+
+    // 요소 관찰
+    function observeElement(selector, callback) {
+        const observer = new MutationObserver((mutationsList, observer) => {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    const element = document.querySelector(selector);
+                    if (element) {
+                        callback();
+                        break;
+                    }
+                }
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    // 노드 번역
+    function translateNodes(nodes, jsonData) {
+        nodes.forEach(node => {
+            const translatedText = jsonData[node.innerText];
+            if (translatedText) node.innerText = translatedText;
+        });
+    }
+
+    // 선택자로 번역
+    function transElement(selector, key, text = null) {
+        const element = document.querySelector(selector);
+        if (element) {
+            if (text !== null) {
+                element.innerText = text;
+            } else {
+                let name_key = element.innerText;
+                if (key === 'types') name_key = lowerText(name_key);
+                if (translations[key][name_key]) {
+                    element.innerText = translations[key][name_key];
+                }
+            }
+        }
+    }
+
+    let previousUrl = window.location.href;
+    let previousHeight = 0;
+
+    function checkUrlChange() {
+        const currentUrl = window.location.href;
+        const currentHeight = document.querySelector("#locationsTable").offsetHeight;
+
+        if (currentUrl !== previousUrl || previousHeight !== currentHeight) {
+            previousUrl = currentUrl;
+            previousHeight = currentHeight
+            mainScript();
+        }
+    }
+
+    const observer = new MutationObserver(checkUrlChange);
+    observer.observe(document, { childList: true, subtree: true });
+
+    observeElement('#speciesTable tbody', () => {
+        document.querySelectorAll('#speciesTable tbody tr').forEach(row => translateRow(row, translations));
+    });
+
+    observeElement('#movesTableTbody', () => {
+        document.querySelectorAll('#movesTableTbody tr').forEach(row => translateMovesRow(row, translations));
+    });
+
+    const selectors = ['#speciesInput', '#movesInput', '#locationsInput'];
+    const filterSelectors = ['#speciesFilterList .tableFilter', '#movesFilterList .tableFilter', '#locationsFilterList .tableFilter'];
+
+    setTimeout(() => {
+        const locationsBody = document.querySelector('#locationsTableTbody');
+        observeElement('#locationsTableTbody', () => {
+            const currentHeight = locationsBody.offsetHeight;
+            if (previousHeight != currentHeight) {
+                mainScript();
+            }
+        });
+
+        mainScript();
+        
+        const searchInputs = selectors.map(selector => document.querySelector(selector));
+        
+        // IME 중복 입력 방지
+        searchInputs.forEach(input => {
+            input.addEventListener('blur', function(event) {
+                const value = this.value
+                this.value = '';
+                this.value = value;
+            });
+        });
+
+        // 검색창 한국어 -> 영어 변환
+        searchInputs.forEach((input, index) => {
+            const filterSelector = filterSelectors[index];
+            input.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter') {
+                    const query = input.value.trim();
+                    let value = translations.reverse[query] || 
+                        Object.keys(translations.biomes).find(key => translations.biomes[key] === query) ||
+                            Object.keys(translations.rarityHead).find(key => translations.rarityHead[key] === query) || 
+                                reverseTranslatorMove(query);
+                    if (value) {
+                        setTimeout(() => {
+                            input.value = value;
+                        }, 0);
+                    }
+                    checkUrlChange();
+                }
+                setTimeout(() => { toggleFilter(input, filterSelector); }, 100);        
+            });
+        });
+    }, 1000);
+
+    // 일치하는 태그 토글
+    function toggleFilter(input, selector) {
+        const query = input.value.trim();
+        const hasKr = /([\uAC00-\uD7A3]){2,}/.test(query);
+        const filterListItems = document.querySelectorAll(selector);
+        filterListItems.forEach(item => {
+            if (query.length < 3 && !hasKr) {
+                item.style.removeProperty('display');
+                return
+            }
+            const span = Array.from(item.querySelectorAll('span')).find(span => 
+                (span.getAttribute('data-original-text') && span.getAttribute('data-original-text').includes(query)) || 
+                (span.innerText && span.innerText.includes(query))
+            );
+            if (span) {
+                item.style = 'display: inline-block !important;';
+            } else {
+                item.style.removeProperty('display');
+            }
+        });
+    }
+
+    // 메인 스크립트
+    function mainScript() {
+        const currentUrl = window.location.href;
+
+        addButtonsEventListener();
+
+        if (currentUrl.includes('?table=speciesTable')) {
+            toggleFilter(document.querySelector(selectors[0]), filterSelectors[0]);
+            const variantNode = document.querySelector('#onlyShowVariantPokemon');
+            if (variantNode) {
+                variantNode.innerText = '변종';
+            }
+            translateHeader(document.querySelectorAll('#speciesTableThead th'), translations.headers);
+            document.querySelectorAll('#speciesTable tbody tr').forEach(row => translateRow(row, translations));
+
+            translateSpeciesFilterList(document.querySelectorAll('#speciesFilterList .tableFilter'));
+
+        } else if (currentUrl.includes('?table=movesTable')) {
+            toggleFilter(document.querySelector(selectors[1]), filterSelectors[1]);
+            translateHeader(document.querySelectorAll('#movesTableThead th'), translations.moves_head);
+            document.querySelectorAll('#movesTableTbody tr').forEach(row => translateMovesRow(row, translations));
+
+            const popupObserver = new MutationObserver(() => translatePopup(translations));
+            popupObserver.observe(document.getElementById('popup'), { childList: true, subtree: true });
+
+            translateSpeciesFilterList(document.querySelectorAll('#movesFilterList .tableFilter'));
+
+        } else if (currentUrl.includes('?species')) {
+            speciesPage(translations);
+            translateNodes(document.querySelectorAll('#speciesPanelBiomesContainer .speciesPanelText'), { "바이옴:": "바이옴:" });
+            translateNodes(document.querySelectorAll('#speciesPanelBiomesContainer .hyperlink'), translations.biomes);
+
+        } else if (currentUrl.includes('?table=locationsTable')) {
+            toggleFilter(document.querySelector(selectors[2]), filterSelectors[2]);
+            const variantNode = document.querySelector('#onlyShowVariantPokemonLocations');
+            if (variantNode) {
+                variantNode.innerText = '변종';
+            }
+
+            const timeData = { "Dawn": "아침", "Day": "낮", "Dusk": "저녁", "Night": "밤" };
+            const nodesToTranslate = {
+                '.locationSpeciesName': translations.names,
+                '.rarityTableThead': translations.rarityHead,
+                '.locationName': translations.biomes,
+                '.timeOfDay': timeData
+            };
+
+            Object.keys(nodesToTranslate).forEach(selector => {
+                const jsonData = nodesToTranslate[selector];
+                translateNodes(document.querySelectorAll(selector), jsonData);
+            });
+
+            document.querySelectorAll('.previousLinkInfo, .nextLinkInfo').forEach(info => {
+                const textNode = info.childNodes[0];
+                if (translations.biomes[textNode.textContent]) {
+                    textNode.textContent = translations.biomes[textNode.textContent];
+                }
+            });
+
+            translateSpeciesFilterList(document.querySelectorAll('#locationsFilterList .tableFilter'));
+        }
+    }
+
+    // 기술 페이지 역번역 함수
+    function reverseTranslatorMove(query) {
+        if (translations.move_reverse[query]) {
+            return translations.move_reverse[query];
+        }
+        const filterTranslation = translations.move_filters.find(filter => filter[1] === query);
+        if (filterTranslation) return filterTranslation[0];
+
+        const move = Object.keys(translations.moves).find(key => translations.moves[key].name_kr === query);
+        if (move) return move;
+
+        const type = Object.keys(translations.types).find(key => translations.types[key] === query);
+        if (type) return type;
+
+        return false;
+    }
+
+    // 포켓몬 상세 페이지 번역
+    function speciesPage(translations) {
+        const translationMappings = [
+            { selector: '#speciesName', key: 'names' },
+            { selector: '#speciesType1', key: 'types' },
+            { selector: '#speciesType2', key: 'types' },
+            { selector: '#speciesType3', key: 'types' }
+        ];
+        
+        translationMappings.forEach(mapping => {
+            transElement(mapping.selector, mapping.key, mapping.text);
+        });
+
+        const panelText = {
+            "Types:": "타입:",
+            "Starter Cost:": "코스트:",
+            "Abilities:": "특성:",
+            "Biomes:": "바이옴:",
+            "Evolution:": "진화:",
+            "Formes:": "폼:"
+        }
+
+        const panels = document.querySelectorAll('.speciesPanelText');
+        panels.forEach(panel => {
+            if (panelText[panel.innerText]) {
+                panel.innerText = panelText[panel.innerText];
+            }
+        })
+
+        const abilities = document.querySelector('#speciesAbilities');
+        if (abilities) {
+            abilities.querySelectorAll('span.hyperlink').forEach(link => {
+                if (translations.abilities[link.innerText]) {
+                    link.innerText = translations.abilities[link.innerText];
+                }
+            });
+        }
+
+        const stats = document.querySelector('#statsSection');
+        if (stats) {
+            let replaceNames = { "Atk": "공격", "Def": "방어", "SpA": "특공", "SpD": "특방", "Spe": "속도", "BST": "합계" };
+            Object.entries(replaceNames).forEach(([key, value]) => {
+                stats.innerHTML = stats.innerHTML.replace(new RegExp(key, 'g'), value);
+            });
+        }
+
+        const evoDiv = document.querySelector('#speciesEvoTable');
+        function evoTrans(evoMethod) {
+            const transData = [
+                ['Level', '레벨'],
+                ['Mega', '메가'],
+                ['Giga', '거다이'],
+                ['Item', '아이템']
+            ]
+            transData.forEach(([orig, trans]) => {
+                evoMethod.innerText = evoMethod.innerText.replace(orig, trans);
+            })
+        }
+        if (evoDiv) {
+            const evoMethods = evoDiv.querySelectorAll('.evoMethod');
+            evoMethods.forEach(evoMethod => {
+                evoTrans(evoMethod);
+            });
+        }
+
+        const formDiv = document.querySelector('#speciesFormes');
+        if (formDiv) {
+            formDiv.querySelectorAll('.underline').forEach(form => {
+                if (translations.names[form.innerText]) {
+                    form.innerText = translations.names[form.innerText];
+                }
+            });
+        }
+
+        const defensive = document.querySelector('#speciesDefensiveTypeChartContainer');
+        if (defensive) {
+            defensive.querySelector('.bold').innerText = "공격받을 때";
+            defensive.querySelectorAll('.backgroundSmall').forEach(type => {
+                const key = lowerText(type.className.split(' ')[1].replace('TYPE_', ''));
+                if (translations.types[key]) {
+                    type.innerText = translations.types[key];
+                }
+            });
+        }
+
+        const offensive = document.querySelector('#speciesOffensiveTypeChartContainer');
+        if (offensive) {
+            offensive.querySelector('.bold').innerText = "공격할 때";
+            offensive.querySelectorAll('.backgroundSmall').forEach(type => {
+                const key = lowerText(type.className.split(' ')[1].replace('TYPE_', ''));
+                if (translations.types[key]) {
+                    type.innerText = translations.types[key];
+                }
+            });
+        }
+
+        const moveTables = document.querySelectorAll('.speciesPanelLearnsetsTableMargin');
+        const transTexts = { "Egg Moves": "유전 기술", "Level-Up": "레벨업", "TM/HM": "기술머신/비전머신" };
+        moveTables.forEach(table => {
+            let shift = 0;
+            const ths = table.querySelectorAll('thead th');
+            ths.forEach(th => {
+                if (translations.moves_head[th.innerText]) {
+                    th.innerText = translations.moves_head[th.innerText];
+                } else if (th.innerText === 'Level' || th.innerText === '레벨') {
+                    th.innerText = '레벨';
+                    shift = 1;
+                }
+            });
+
+            const caption = table.querySelector('caption.bold');
+            const parts = caption.childNodes[0].textContent.split('\n');
+            if (parts && transTexts[parts[0]]) {
+                caption.childNodes[0].textContent = transTexts[parts[0]] + '\n' + parts[1];
+            }
+
+            table.querySelectorAll('tr').forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const nameCell = cells[0 + shift];
+                if (nameCell) {
+                    const effectCell = cells[6 + shift];
+                    const move = translations.moves[Object.keys(translations.moves).find(key => translations.moves[key].name === nameCell.innerText)];
+                    if (move) {
+                        nameCell.innerText = move.name_kr;
+                        if (move.Effect_kr) {
+                            effectCell.innerHTML = move.Effect_kr.includes(". ") ? move.Effect_kr.replace(". ", ". \n").split("\n").map(part => `<div>${part}</div>`).join("") : splitMiddle(move.Effect_kr, 35).map(part => `<div>${part}</div>`).join("");
+                        }
+                    }
+
+                    const typeDiv = cells[1 + shift].querySelector('div');
+                    if (typeDiv) {
+                        const key = lowerText(typeDiv.className.split(' ')[0].replace('TYPE_', ''));
+                        if (translations.types[key]) {
+                            typeDiv.innerText = translations.types[key];
+                        }
+                    }
+                }
+            });
+        });
+    }
 
     function splitMiddle(text, maxLength) {
-        if (text.length <= maxLength) {
-            return [text];
-        }
+        if (text.length <= maxLength) return [text];
         const middle = Math.floor(text.length / 2);
-        let left = middle;
-        let right = middle;
-    
-        while (left > 0 && text[left] !== ' ') {
-            left--;
-        }
-        while (right < text.length && text[right] !== ' ') {
-            right++;
-        }
-
+        let left = middle, right = middle;
+        while (left > 0 && text[left] !== ' ') left--;
+        while (right < text.length && text[right] !== ' ') right++;
         const splitIndex = (middle - left <= right - middle) ? left : right;
-        const part1 = text.substring(0, splitIndex);
-        const part2 = text.substring(splitIndex + 1);
-        return [part1, part2];
+        return [text.substring(0, splitIndex), text.substring(splitIndex + 1)];
     }
 })();

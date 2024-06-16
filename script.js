@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PokeRogue-Pokedex-Translator
 // @namespace    https://github.com/manhattanhouse/poke_kor
-// @version      5.0
+// @version      6.0
 // @description  PokeRogue Pokedex 항목을 한국어로 번역합니다.
 // @author       manhattanhouse
 // @match        https://ydarissep.github.io/PokeRogue-Pokedex/*
@@ -25,6 +25,7 @@
         return response.json();
     }
 
+    /*
     // 첫 글자를 제외하고 소문자로 변경
     function lowerText(text) {
         return text.charAt(0) + text.slice(1).toLowerCase();
@@ -38,16 +39,16 @@
             button.innerText = buttonTexts[index];
         });
     }
-
+    */
     // 셀 번역
     function translateCell(cell, translationDict, classPrefix = '') {
         const originalText = cell.textContent.trim();
-        const translatedText = translationDict[originalText] || translationDict[lowerText(cell.className.split(' ')[0].replace(classPrefix, ''))];
+        const translatedText = translationDict[originalText] /*|| translationDict[lowerText(cell.className.split(' ')[0].replace(classPrefix, ''))]*/;
         if (translatedText) {
             cell.textContent = translatedText;
         }
-    }
-
+    } 
+    /*
     // 행 번역
     function translateRow(row, translations) {
         translateCell(row.querySelector('.nameContainer .species'), translations.names);
@@ -55,7 +56,7 @@
         row.querySelectorAll('.abilities div').forEach(cell => translateCell(cell, translations.abilities));
         row.querySelectorAll('.italic').forEach(cell => translateCell(cell, translations.headers));
     }
-
+    
     // 기술 행 번역
     function translateMovesRow(row, translations) {
         const moveCell = row.querySelector('.move');
@@ -94,7 +95,7 @@
     function translateHeader(headers, translations) {
         headers.forEach(cell => translateCell(cell, translations));
     }
-
+    */
     // 필터 목록 번역
     function translateSpeciesFilterList(tableFilters) {
         tableFilters.forEach(item => {
@@ -170,6 +171,7 @@
     function translatePopup(translations) {
         const popup = document.getElementById('popup');
         if (popup) {
+            /*
             const title = popup.querySelector('h2');
             const originalText = title.textContent.trim();
             const matchedText = originalText.match(/\((.)\)/);
@@ -197,17 +199,18 @@
                     const effectTranslation = translations.move_effect.find(effect => effect[0] === effectElement.textContent.trim());
                     if (effectTranslation) effectElement.textContent = effectTranslation[1];
                 }
-
-                translateCell(popup.querySelector('.popupTrainerMoveType'), translations.types);
-                popup.querySelector('.popupFilterButton').textContent = '필터';
-                popup.querySelectorAll('.hyperlink').forEach(link => {
-                    const filterTranslation = translations.move_filters.find(filter => filter[0] == link.innerText);
-                    if (filterTranslation) link.innerText = filterTranslation[1];
-                });
             }
+            */
+            popup.querySelectorAll('.hyperlink').forEach(link => {
+                const filterTranslation = translations.move_filters.find(filter => filter[0] == link.innerText);
+                if (filterTranslation) link.innerText = filterTranslation[1];
+            });
+            translateCell(popup.querySelector('.popupTrainerMoveType'), translations.types);
+            popup.querySelector('.popupFilterButton').textContent = '필터';
         }
     }
 
+    /*
     // 요소 관찰
     function observeElement(selector, callback) {
         const observer = new MutationObserver((mutationsList, observer) => {
@@ -248,27 +251,30 @@
             }
         }
     }
-    
+    */
+
     let previousUrl = window.location.href;
-    let previousHeight = 0;
-    let previousHeightAb = 0;
+    //let previousHeight = 0;
+    //let previousHeightAb = 0;
 
     function checkUrlChange() {
         const currentUrl = window.location.href;
-        const currentHeight = document.querySelector("#locationsTable").offsetHeight;
-        const currentHeightAb = document.querySelector("#abilitiesTable").offsetHeight;
+        //const currentHeight = document.querySelector("#locationsTable").offsetHeight;
+        //const currentHeightAb = document.querySelector("#abilitiesTable").offsetHeight;
 
-        if (currentUrl !== previousUrl || previousHeight !== currentHeight) {
+        if (currentUrl !== previousUrl /*|| previousHeight !== currentHeight*/) {
             previousUrl = currentUrl;
-            previousHeight = currentHeight
+            //previousHeight = currentHeight
             mainScript();
-        } else if (previousHeightAb !== currentHeightAb) {
+        } /*else if (previousHeightAb !== currentHeightAb) {
             transAbilities();
-        }
+        }*/
     }
 
     const observer = new MutationObserver(checkUrlChange);
     observer.observe(document, { childList: true, subtree: true });
+
+    /*
 
     observeElement('#speciesTable tbody', () => {
         document.querySelectorAll('#speciesTable tbody tr').forEach(row => translateRow(row, translations));
@@ -278,10 +284,15 @@
         document.querySelectorAll('#movesTableTbody tr').forEach(row => translateMovesRow(row, translations));
     });
 
+    */
+
     const selectors = ['#speciesInput', '#movesInput', '#locationsInput', '#abilitiesInput'];
     const filterSelectors = ['#speciesFilterList .tableFilter', '#movesFilterList .tableFilter', '#locationsFilterList .tableFilter', false];
 
     setTimeout(() => {
+        mainScript();
+
+        /*
         const locationsBody = document.querySelector('#locationsTableTbody');
         observeElement('#locationsTableTbody', () => {
             const currentHeight = locationsBody.offsetHeight;
@@ -289,12 +300,11 @@
                 mainScript();
             }
         });
+        */
 
-        mainScript();
-        document.querySelectorAll('#speciesTable tbody tr').forEach(row => translateRow(row, translations));
-        
         const searchInputs = selectors.map(selector => document.querySelector(selector));
         
+        /*
         // IME 중복 입력 방지
         searchInputs.forEach(input => {
             input.addEventListener('blur', function(event) {
@@ -303,11 +313,13 @@
                 this.value = value;
             });
         });
+        */
 
         // 검색창 한국어 -> 영어 변환
         searchInputs.forEach((input, index) => {
             input.addEventListener('keyup', (event) => {
                 const filterSelector = filterSelectors[index];
+                /*
                 if (event.key === 'Enter') {
                     const query = input.value.trim();
                     let value = '';
@@ -326,10 +338,15 @@
                     }
                     checkUrlChange();
                 }
+                */
                 if (!filterSelector) return;
                 setTimeout(() => { toggleFilter(input, filterSelector); }, 100);        
             });
         });
+
+        const popupObserver = new MutationObserver(() => translatePopup(translations));
+        popupObserver.observe(document.getElementById('popup'), { childList: true, subtree: true });
+
     }, 1000);
 
     // 일치하는 태그 토글
@@ -358,36 +375,37 @@
     function mainScript() {
         const currentUrl = window.location.href;
 
-        addButtonsEventListener();
+        //addButtonsEventListener();
 
         if (currentUrl.includes('?table=speciesTable')) {
+            translateSpeciesFilterList(document.querySelectorAll('#speciesFilterList .tableFilter'));
             toggleFilter(document.querySelector(selectors[0]), filterSelectors[0]);
+            /*
             const variantNode = document.querySelector('#onlyShowVariantPokemon');
             if (variantNode) {
                 variantNode.innerText = '변종';
             }
             translateHeader(document.querySelectorAll('#speciesTableThead th'), translations.headers);
             document.querySelectorAll('#speciesTable tbody tr').forEach(row => translateRow(row, translations));
-
-            translateSpeciesFilterList(document.querySelectorAll('#speciesFilterList .tableFilter'));
+            */
 
         } else if (currentUrl.includes('?table=movesTable')) {
+            translateSpeciesFilterList(document.querySelectorAll('#movesFilterList .tableFilter'));
             toggleFilter(document.querySelector(selectors[1]), filterSelectors[1]);
+            /*
             translateHeader(document.querySelectorAll('#movesTableThead th'), translations.moves_head);
             document.querySelectorAll('#movesTableTbody tr').forEach(row => translateMovesRow(row, translations));
-
-            const popupObserver = new MutationObserver(() => translatePopup(translations));
-            popupObserver.observe(document.getElementById('popup'), { childList: true, subtree: true });
-
-            translateSpeciesFilterList(document.querySelectorAll('#movesFilterList .tableFilter'));
+            */
 
         } else if (currentUrl.includes('?species')) {
             speciesPage(translations);
-            translateNodes(document.querySelectorAll('#speciesPanelBiomesContainer .speciesPanelText'), { "바이옴:": "바이옴:" });
-            translateNodes(document.querySelectorAll('#speciesPanelBiomesContainer .hyperlink'), translations.biomes);
+            //translateNodes(document.querySelectorAll('#speciesPanelBiomesContainer .speciesPanelText'), { "바이옴:": "바이옴:" });
+            //translateNodes(document.querySelectorAll('#speciesPanelBiomesContainer .hyperlink'), translations.biomes);
 
         } else if (currentUrl.includes('?table=locationsTable')) {
+            translateSpeciesFilterList(document.querySelectorAll('#locationsFilterList .tableFilter'));
             toggleFilter(document.querySelector(selectors[2]), filterSelectors[2]);
+            /*
             const variantNode = document.querySelector('#onlyShowVariantPokemonLocations');
             if (variantNode) {
                 variantNode.innerText = '변종';
@@ -412,17 +430,19 @@
                     textNode.textContent = translations.biomes[textNode.textContent];
                 }
             });
+            */
 
-            translateSpeciesFilterList(document.querySelectorAll('#locationsFilterList .tableFilter'));
         } else if (currentUrl.includes('?table=abilitiesTable')) {
+            /*
             document.querySelectorAll('#abilitiesTableThead th').forEach(th => {
                 if (th.className == 'ability') th.textContent = '이름';
                 else if (th.className == 'description') th.textContent = '설명';
             });
             transAbilities();
+            */
         }
     }
-
+    /*
     // 특성 페이지 번역 함수
     function transAbilities() {
         const cells = document.querySelectorAll('#abilitiesTableTbody td.ability');
@@ -464,6 +484,7 @@
 
         return false;
     }
+    */
 
     // key to value replace 함수
     function translateText(text, dictionary, key) {
@@ -478,6 +499,7 @@
 
     // 포켓몬 상세 페이지 번역
     function speciesPage(translations) {
+        /*
         const translationMappings = [
             { selector: '#speciesName', key: 'names' },
             { selector: '#speciesType1', key: 'types' },
@@ -488,12 +510,13 @@
         translationMappings.forEach(mapping => {
             transElement(mapping.selector, mapping.key, mapping.text);
         });
+        */
 
         const panelText = {
-            "Types:": "타입:",
-            "Starter Cost:": "코스트:",
-            "Abilities:": "특성:",
-            "Biomes:": "바이옴:",
+            //"Types:": "타입:",
+            //"Starter Cost:": "코스트:",
+            //"Abilities:": "특성:",
+            //"Biomes:": "바이옴:",
             "Evolution:": "진화:",
             "Formes:": "폼:"
         }
@@ -505,6 +528,7 @@
             }
         })
 
+        /*
         const abilities = document.querySelector('#speciesAbilities');
         if (abilities) {
             abilities.querySelectorAll('span.hyperlink').forEach(link => {
@@ -523,6 +547,7 @@
                 stats.innerHTML = stats.innerHTML.replace(new RegExp(key, 'g'), value);
             });
         }
+        */
 
         const evoDiv = document.querySelector('#speciesEvoTable');
         const regex = /Item In Biome (.+) \((.+)\)/;
@@ -564,7 +589,7 @@
                 evoTrans(evoMethod);
             });
         }
-
+        /*
         const formDiv = document.querySelector('#speciesFormes');
         if (formDiv) {
             formDiv.querySelectorAll('.underline').forEach(form => {
@@ -573,32 +598,39 @@
                 }
             });
         }
+        */
 
         const defensive = document.querySelector('#speciesDefensiveTypeChartContainer');
         if (defensive) {
             defensive.querySelector('.bold').innerText = "공격받을 때";
+            /*
             defensive.querySelectorAll('.backgroundSmall').forEach(type => {
                 const key = lowerText(type.className.split(' ')[1].replace('TYPE_', ''));
                 if (translations.types[key]) {
                     type.innerText = translations.types[key];
                 }
             });
+            */
         }
 
         const offensive = document.querySelector('#speciesOffensiveTypeChartContainer');
         if (offensive) {
             offensive.querySelector('.bold').innerText = "공격할 때";
+            /*
             offensive.querySelectorAll('.backgroundSmall').forEach(type => {
                 const key = lowerText(type.className.split(' ')[1].replace('TYPE_', ''));
                 if (translations.types[key]) {
                     type.innerText = translations.types[key];
                 }
             });
+            */
         }
 
         const moveTables = document.querySelectorAll('.speciesPanelLearnsetsTableMargin');
         const transTexts = { "Egg Moves": "유전 기술", "Level-Up": "레벨업", "TM/HM": "기술머신/비전머신" };
+
         moveTables.forEach(table => {
+            /*
             let shift = 0;
             const ths = table.querySelectorAll('thead th');
             ths.forEach(th => {
@@ -609,13 +641,14 @@
                     shift = 1;
                 }
             });
+            */
 
             const caption = table.querySelector('caption.bold');
             const parts = caption.childNodes[0].textContent.split('\n');
             if (parts && transTexts[parts[0]]) {
                 caption.childNodes[0].textContent = transTexts[parts[0]] + '\n' + parts[1];
             }
-
+            /*
             table.querySelectorAll('tr').forEach(row => {
                 const cells = row.querySelectorAll('td');
                 const nameCell = cells[0 + shift];
@@ -638,9 +671,10 @@
                     }
                 }
             });
+            */
         });
     }
-
+    /*
     function splitMiddle(text, maxLength) {
         if (text.length <= maxLength) return [text];
         const middle = Math.floor(text.length / 2);
@@ -650,4 +684,5 @@
         const splitIndex = (middle - left <= right - middle) ? left : right;
         return [text.substring(0, splitIndex), text.substring(splitIndex + 1)];
     }
+    */
 })();

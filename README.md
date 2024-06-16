@@ -12,11 +12,11 @@
 
 
 공식에서 누락되어 스크립트가 번역하는 항목
-1. 포켓몬의 진화 조건
-2. 기술의 분류 태그
+    - 포켓몬의 진화 조건
+    - 기술의 분류 태그
 
 
-확장프로그램 Tampermonkey 혹은 Violentmonkey 설치
+1. 확장프로그램 Tampermonkey 혹은 Violentmonkey 설치
 
     - 크롬: [Tampermonkey](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo), [Violentmonkey](https://chromewebstore.google.com/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag)
     - 엣지: [Tampermonkey](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd), [Violentmonkey](https://microsoftedge.microsoft.com/addons/detail/violentmonkey/eeagobfjdenkkddmbclomhiblgggliao)
@@ -24,6 +24,6 @@
     - (크롬 브라우저는 확장프로그램 페이지의 개발자 모드를 켜야 Tampermonkey가 작동합니다.)
 
 
-PokeRogue-Pokedex-Translator 스크립트 설치
+2. PokeRogue-Pokedex-Translator 스크립트 설치
 
     - [PokeRogue-Pokedex-Translator](https://greasyfork.org/ko/scripts/497838-pokerogue-pokedex-translator)
